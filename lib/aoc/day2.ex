@@ -4,23 +4,26 @@ defmodule Aoc.Day2 do
   def count_chars(line) do
     line
     |> String.graphemes()
-    |> Enum.reduce(%{}, fn ch, counts ->
-      Map.update(counts, ch, 1, &inc/1)
-    end)
+    |> Util.count(&(&1))
+    # |> Enum.reduce(%{}, fn ch, counts ->
+    #   Map.update(counts, ch, 1, &inc/1)
+    # end)
   end
 
   def get_counts(char_counts) do
     char_counts
-    |> Enum.reduce(%{}, fn {_, count}, counts ->
-      Map.update(counts, count, 1, &inc/1)
-    end)
+    |> Util.count(fn {_, count} -> count end)
+    # |> Enum.reduce(%{}, fn {_, count}, counts ->
+    #   Map.update(counts, count, 1, &inc/1)
+    # end)
   end
 
   def group_counts(count_counts, acc) do
     count_counts
-    |> Enum.reduce(acc, fn {num, _}, counts ->
-      Map.update(counts, num, 1, &inc/1)
-    end)
+    |> Util.count(acc, fn {num, _} -> num end)
+    # |> Enum.reduce(acc, fn {num, _}, counts ->
+    #   Map.update(counts, num, 1, &inc/1)
+    # end)
   end
 
   def checksum(counts) do
