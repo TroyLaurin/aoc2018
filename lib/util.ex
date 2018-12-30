@@ -12,4 +12,8 @@ defmodule Util do
       list
     end
   end
+
+  def put_in_map(value, map, key) do
+    Map.put(map, key, value)
+  end
 end
