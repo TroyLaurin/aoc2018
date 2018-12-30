@@ -1,38 +1,72 @@
 defmodule Aoc.Day5 do
-  def trigger(polymer) do
-    if String.length(polymer) < 2 do
-      polymer
-    else
-      {head, tail} = String.split_at(polymer, 1)
-      retrigger(head, tail)
-    end
+  def react(""), do: ""
+  def react(polymer), do: do_react(String.to_charlist(polymer), [])
+
+  defp do_react(tail, head, opts \\ [])
+
+  defp do_react([], head, opts) do
+    head
+    |> Util.maybe_reverse(Keyword.get(opts, :reverse, true))
+    |> to_string()
   end
 
-  def retrigger(head, ""), do: head
-  def retrigger("", tail), do: trigger(tail)
+  defp do_react([a | tail], [], opts) do
+    do_react(tail, [a], opts)
+  end
 
-  def retrigger(head, tail) do
-    a = String.last(head)
-    # |> IO.inspect(label: "A")
-
-    {b, new_tail} = String.split_at(tail, 1)
-    # |> IO.inspect(label: "B")
-
+  defp do_react([b | tail], [a | head], opts) do
     new_head =
-      if a == b or String.upcase(a) != String.upcase(b) do
-        head <> b
+      if a == b or String.upcase(<<a>>) != String.upcase(<<b>>) do
+        [b | [a | head]]
       else
         head
-        |> String.split_at(-1)
-        |> elem(0)
       end
 
-    if rem(String.length(new_tail), 100) == 0, do: IO.puts(String.length(new_tail))
-
-    retrigger(new_head, new_tail)
+    do_react(tail, new_head, opts)
   end
 
   def part1(lines) do
-    Enum.map(lines, &trigger/1)
+    Enum.map(lines, &part1_line/1)
+  end
+
+  def part1_line(line) do
+    result = line
+    |> react()
+
+    {String.length(result), result}
+  end
+
+  def remove([], tail, _), do: tail
+
+  def remove([a | head], tail, unit) do
+    if String.upcase(<<a>>) == unit do
+      remove(head, tail, unit)
+    else
+      remove(head, [a | tail], unit)
+    end
+  end
+
+  def remove_then_react(unit, line) do
+    line
+    |> String.to_charlist()
+    |> remove([], unit)
+    |> do_react([], reverse: false)
+  end
+
+  def part2(lines) do
+    Enum.map(lines, &part2_line/1)
+  end
+
+  def part2_line(line) do
+    line
+    |> String.upcase()
+    |> String.to_charlist()
+    |> Enum.uniq()
+    |> Enum.into(%{}, fn unit ->
+      result = remove_then_react(<<unit>>, line)
+      {<<unit>>, {String.length(result), result}}
+    end)
+    # |> IO.inspect()
+    |> Enum.min_by(fn {_, {length, _} } -> length end)
   end
 end
