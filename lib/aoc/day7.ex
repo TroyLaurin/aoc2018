@@ -45,7 +45,7 @@ defmodule Aoc.Day7 do
         |> Enum.empty?()
       end)
       |> Enum.sort()
-      |> IO.inspect(label: "Initial candidates")
+      # |> IO.inspect(label: "Initial candidates")
 
     %{state | waiting: candidates}
   end
@@ -158,9 +158,9 @@ defmodule Aoc.Day7 do
   def part1(lines) do
     lines
     |> build_graph()
-    |> IO.inspect(label: "graph")
+    # |> IO.inspect(label: "graph")
     |> work_graph(1, nil)
-    |> IO.inspect(label: "Final done")
+    # |> IO.inspect(label: "Final done")
   end
 
   def part2(lines, opts \\ []) do
